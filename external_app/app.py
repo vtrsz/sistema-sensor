@@ -1,4 +1,5 @@
 import random
+import os
 
 from flask import Flask, request, jsonify
 from time import time
@@ -55,4 +56,4 @@ def set_points_sensor():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=int(os.getenv("EXTERNAL_APP_PORT", 5000)))
