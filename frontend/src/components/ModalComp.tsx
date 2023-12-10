@@ -25,8 +25,8 @@ const ModalComp = ({ data, setData, dataEdit, isOpen, onClose }) => {
   const [sensors, setSensors] = useState(dataEdit.sensors || []);
   const [errorAlert, setErrorAlert] = useState(false);
 
-  const backend_host = process.env.BACKEND_HOST;
-  const backend_port = process.env.BACKEND_PORT;
+  const backend_host = process.env.NEXT_PUBLIC_BACKEND_HOST;
+  const backend_port = process.env.NEXT_PUBLIC_BACKEND_PORT;
 
   const validateSensors = () => {
     return sensors.every((sensor) => sensor.name.trim() !== "");

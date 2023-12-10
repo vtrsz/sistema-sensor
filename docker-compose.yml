@@ -57,8 +57,8 @@ services:
       - "${FRONTEND_PORT}"
     environment:
       - NODE_ENV=development
-      - BACKEND_HOST=${BACKEND_HOST}
-      - BACKEND_PORT=${BACKEND_PORT}
+      - NEXT_PUBLIC_BACKEND_HOST=${BACKEND_HOST}
+      - NEXT_PUBLIC_BACKEND_PORT=${BACKEND_PORT}
     networks:
       - "sistema-sensor-network"
 networks:

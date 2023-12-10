@@ -23,8 +23,8 @@ const Machine = () => {
   const [data, setData] = useState([]);
   const [dataEdit, setDataEdit] = useState({});
 
-  const backend_host = process.env.BACKEND_HOST;
-  const backend_port = process.env.BACKEND_PORT;
+  const backend_host = process.env.NEXT_PUBLIC_BACKEND_HOST;
+  const backend_port = process.env.NEXT_PUBLIC_BACKEND_PORT;
 
   const isMobile = useBreakpointValue({
     base: true,
