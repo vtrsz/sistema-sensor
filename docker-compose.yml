@@ -12,7 +12,6 @@ services:
       - "${BACKEND_PORT}"
     depends_on:
       - "db"
-      - "rabbitmq"
       - "external_app"
     environment: # Environment variables override application.properties
         SPRING_DATASOURCE_URL: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
