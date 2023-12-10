@@ -10,4 +10,7 @@
 5. Volte para a pasta principal do projeto (`cd ..`) e rode o docker com o comando: 
    - `docker compose up` (caso sua versão do docker compose seja a V1, utilize o comando: `docker-compose up`)
 
+
+## <a href="http://localhost:8080/api/docs">Acesse a documentação</a>
+
 Pronto! Todas aplicações irão iniciar.
