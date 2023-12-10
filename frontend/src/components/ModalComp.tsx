@@ -25,6 +25,9 @@ const ModalComp = ({ data, setData, dataEdit, isOpen, onClose }) => {
   const [sensors, setSensors] = useState(dataEdit.sensors || []);
   const [errorAlert, setErrorAlert] = useState(false);
 
+  const backend_host = process.env.BACKEND_HOST;
+  const backend_port = process.env.BACKEND_PORT;
+
   const validateSensors = () => {
     return sensors.every((sensor) => sensor.name.trim() !== "");
   };
@@ -48,9 +51,9 @@ const ModalComp = ({ data, setData, dataEdit, isOpen, onClose }) => {
     try {
       let req;
       if (Object.keys(dataEdit).length) {
-        req = await axios.put(`http://localhost:8080/api/machine/${dataEdit.id}`, { sensors, sequence });
+        req = await axios.put(`http://backend_host:backend_port/api/machine/${dataEdit.id}`, { sensors, sequence });
       } else {
-        req = await axios.post("http://localhost:8080/api/machine", { sensors, sequence });
+        req = await axios.post("http://backend_host:backend_port/api/machine", { sensors, sequence });
       }
 
       // Log the response for debugging

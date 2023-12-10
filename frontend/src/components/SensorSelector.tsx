@@ -28,7 +28,7 @@ const SensorSelector = () => {
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const response = await axios.get("http://localhost:8080/api/sensor");
+          const response = await axios.get("http://backend_host:backend_port/api/sensor");
           setSensors(response.data);
         } catch (error) {
           console.error("Error fetching data:", error);
