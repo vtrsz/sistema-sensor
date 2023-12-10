@@ -8,6 +8,7 @@ import com.vtrsz.sistema_sensor.entity.Machine;
 import com.vtrsz.sistema_sensor.entity.Sensor;
 import com.vtrsz.sistema_sensor.repository.MachineRepository;
 import com.vtrsz.sistema_sensor.repository.SensorHistoryRepository;
+import com.vtrsz.sistema_sensor.repository.SensorRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,13 +17,18 @@ import java.util.stream.Collectors;
 
 @Service
 public class MachineService {
-    MachineRepository machineRepository;
+    private final MachineRepository machineRepository;
 
-    SensorHistoryRepository sensorHistoryRepository;
+    private final SensorHistoryRepository sensorHistoryRepository;
+    private final SensorRepository sensorRepository;
 
-    public MachineService(MachineRepository machineRepository, SensorHistoryRepository sensorHistoryRepository) {
+    public MachineService(MachineRepository machineRepository,
+                          SensorHistoryRepository sensorHistoryRepository,
+                          SensorRepository sensorRepository,
+                          SensorService sensorService) {
         this.machineRepository = machineRepository;
         this.sensorHistoryRepository = sensorHistoryRepository;
+        this.sensorRepository = sensorRepository;
     }
 
     private static ResponseMachineDto machineToResponseDto(Machine machine) {
@@ -111,5 +117,25 @@ public class MachineService {
         machineRepository.save(machineToUpdate.get());
 
         return Optional.ofNullable(MachineService.machineToResponseDto(machineToUpdate.get()));
+    }
+
+    @Transactional
+    public Optional<Boolean> delete(UUID id) {
+        Optional<Machine> machineToDelete = machineRepository.findById(id);
+        if (machineToDelete.isEmpty()) {
+            return Optional.empty();
+        }
+
+        List<Sensor> sensors = machineToDelete.get().getSensors();
+
+        sensors.forEach((sensor) -> {
+            sensorHistoryRepository.deleteBySensorId(sensor.getId());
+        });
+
+        sensorRepository.deleteAll(sensors);
+
+        machineRepository.delete(machineToDelete.get());
+
+        return Optional.of(true);
     }
 }

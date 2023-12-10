@@ -3,6 +3,9 @@ package com.vtrsz.sistema_sensor.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity(name = "sensor")
 @Table(name = "sensor")
 @AllArgsConstructor
@@ -22,4 +25,7 @@ public class Sensor {
     @ManyToOne
     @JoinColumn(name = "machine_id", referencedColumnName = "id")
     private Machine machine;
+
+    @OneToMany(mappedBy = "sensor", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<SensorHistory> sensorHistoryList = new ArrayList<>();
 }

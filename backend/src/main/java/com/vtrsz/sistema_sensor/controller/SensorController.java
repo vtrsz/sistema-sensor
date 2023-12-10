@@ -74,4 +74,15 @@ public class SensorController {
     public ResponseEntity<ResponseSensorDto> put(@PathVariable final Long id, @Valid @RequestBody CreateSensorDto updateSensorDto) throws BusinessRuleException {
         return ResponseEntity.of(sensorService.updateById(updateSensorDto, id));
     }
+
+    @Operation(summary = "Delete sensor",
+            description = "Remove a sensor from database.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully Deleted"),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+    })
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Boolean> delete(@PathVariable final Long id) {
+        return ResponseEntity.of(sensorService.delete(id));
+    }
 }

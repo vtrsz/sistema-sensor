@@ -74,4 +74,15 @@ public class MachineController {
     public ResponseEntity<ResponseMachineDto> putPerson(@PathVariable final UUID id, @Valid @RequestBody UpdateMachineDto updateMachineDto) {
         return ResponseEntity.of(machineService.updateById(updateMachineDto, id));
     }
+
+    @Operation(summary = "Delete machine",
+            description = "Remove a machine from database.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully Deleted"),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+    })
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Boolean> delete(@PathVariable final UUID id) {
+        return ResponseEntity.of(machineService.delete(id));
+    }
 }

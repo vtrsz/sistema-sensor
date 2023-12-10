@@ -1,8 +1,6 @@
 package com.vtrsz.sistema_sensor.service;
 
 import com.vtrsz.sistema_sensor.dto.request.CreateSensorDto;
-import com.vtrsz.sistema_sensor.dto.request.UpdateMachineDto;
-import com.vtrsz.sistema_sensor.dto.response.ResponseMachineDto;
 import com.vtrsz.sistema_sensor.dto.response.ResponseSensorDto;
 import com.vtrsz.sistema_sensor.entity.Machine;
 import com.vtrsz.sistema_sensor.entity.Sensor;
@@ -13,7 +11,10 @@ import com.vtrsz.sistema_sensor.repository.SensorRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SensorService {
@@ -89,10 +90,22 @@ public class SensorService {
         sensorToUpdate.get().setName(sensorDto.getName());
         sensorToUpdate.get().setMachine(machine.get());
 
-        //sensorHistoryRepository.deleteBySensorId(sensor.getId());
-
         sensorRepository.save(sensorToUpdate.get());
 
         return Optional.ofNullable(SensorService.sensorToResponseDto(sensorToUpdate.get()));
+    }
+
+    @Transactional
+    public Optional<Boolean> delete(Long id) {
+        Optional<Sensor> sensorToDelete = sensorRepository.findById(id);
+        if (sensorToDelete.isEmpty()) {
+            return Optional.empty();
+        }
+
+        sensorHistoryRepository.deleteBySensorId(id);
+
+        sensorRepository.delete(sensorToDelete.get());
+
+        return Optional.of(true);
     }
 }
