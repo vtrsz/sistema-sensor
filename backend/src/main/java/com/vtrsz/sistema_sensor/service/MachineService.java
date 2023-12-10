@@ -52,9 +52,19 @@ public class MachineService {
             throw new IllegalArgumentException("a person cannot be null");
         }
 
+        if (machineDto.getSensors() == null) {
+            machineDto.setSensors(Collections.emptyList());
+        }
+
         Machine machine = Machine.builder()
                 .sequence(machineDto.getSequence())
                 .build();
+
+        machine.setSensors(machineDto.getSensors().stream().map((sensor) -> Sensor.builder()
+                .name(sensor.getName())
+                .machine(machine)
+                .build()).toList()
+        );
 
         machineRepository.save(machine);
 
