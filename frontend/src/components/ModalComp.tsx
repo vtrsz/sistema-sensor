@@ -51,9 +51,9 @@ const ModalComp = ({ data, setData, dataEdit, isOpen, onClose }) => {
     try {
       let req;
       if (Object.keys(dataEdit).length) {
-        req = await axios.put(`http://backend_host:backend_port/api/machine/${dataEdit.id}`, { sensors, sequence });
+        req = await axios.put(`http://${backend_host}:${backend_port}/api/machine/${dataEdit.id}`, { sensors, sequence });
       } else {
-        req = await axios.post("http://backend_host:backend_port/api/machine", { sensors, sequence });
+        req = await axios.post(`http://${backend_host}:${backend_port}/api/machine`, { sensors, sequence });
       }
 
       // Log the response for debugging

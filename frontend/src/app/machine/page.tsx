@@ -23,6 +23,9 @@ const Machine = () => {
   const [data, setData] = useState([]);
   const [dataEdit, setDataEdit] = useState({});
 
+  const backend_host = process.env.BACKEND_HOST;
+  const backend_port = process.env.BACKEND_PORT;
+
   const isMobile = useBreakpointValue({
     base: true,
     lg: false,
@@ -31,7 +34,7 @@ const Machine = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://backend_host:backend_port/api/machine");
+        const response = await axios.get(`http://${backend_host}:${backend_port}/api/machine`);
         setData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -42,7 +45,7 @@ const Machine = () => {
   }, [setData]);
 
   const handleRemove = async (id) => {
-    let res = await axios.delete(`http://backend_host:backend_port/api/machine/${id}`).then(
+    let res = await axios.delete(`http://${backend_host}:${backend_port}/api/machine/${id}`).then(
       (response) => {
         let newArray = data.filter((item) => item.id !== id);
         setData(newArray);

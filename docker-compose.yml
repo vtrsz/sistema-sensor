@@ -59,6 +59,8 @@ services:
       - NODE_ENV=development
       - BACKEND_HOST=${BACKEND_HOST}
       - BACKEND_PORT=${BACKEND_PORT}
+    networks:
+      - "sistema-sensor-network"
 networks:
   sistema-sensor-network:
     driver: bridge

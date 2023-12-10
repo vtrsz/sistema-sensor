@@ -25,10 +25,14 @@ const SensorSelector = () => {
     const [selectedSensor, setSelectedSensor] = useState("");
     const [dataEdit, setDataEdit] = useState({});
 
+    const backend_host = process.env.BACKEND_HOST;
+    const backend_port = process.env.BACKEND_PORT;
+  
+
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const response = await axios.get("http://backend_host:backend_port/api/sensor");
+          const response = await axios.get(`http://${backend_host}:${backend_port}/api/sensor`);
           setSensors(response.data);
         } catch (error) {
           console.error("Error fetching data:", error);
