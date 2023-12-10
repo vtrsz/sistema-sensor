@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  /* border: 1px red solid; */
+  /* border: 1px red solid; */
+}
+
+:root {
+  /* HEADER */
+  --header-background-color: rgb(35, 181, 211);
+  --aside-background-color: rgba(162, 174, 187, 1);
+
+  /* FOOTER */
+  --footer-background-color: rgb(35, 181, 211);
+
+  /* MAIN COLORS */
+  --foreground-color: rgb(7, 16, 19);
+  --background-color: rgb(255, 255, 255);
+
+  --search-section-background-color: rgb(117, 171, 188);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* HEADER */
+    --header-background-color: rgb(29, 45, 68);
+    --aside-background-color: rgba(13, 19, 33, 0.7);
+
+    /* FOOTER */
+    --footer-background-color: rgb(29, 45, 68);
+
+    /* MAIN COLORS */
+    --foreground-color: rgb(240, 235, 216);
+    --background-color: rgb(13, 19, 33);
+
+    --search-section-background-color: rgb(62, 92, 118);
+  }
+}

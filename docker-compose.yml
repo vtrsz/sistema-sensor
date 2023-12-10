@@ -47,6 +47,18 @@ services:
       - "${EXTERNAL_APP_PORT}"
     environment:
       - EXTERNAL_APP_PORT=${EXTERNAL_APP_PORT}
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    expose:
+      - "${FRONTEND_PORT}"
+    environment:
+      - NODE_ENV=development
+      - BACKEND_HOST=${BACKEND_HOST}
+      - BACKEND_PORT=${BACKEND_PORT}
 networks:
   sistema-sensor-network:
     driver: bridge
