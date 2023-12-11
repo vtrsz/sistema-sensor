@@ -23,15 +23,6 @@ interface SensorData {
   timestamp: EpochTimeStamp;
 }
 
-interface SensorGraphicData {
-  timestamp: EpochTimeStamp;
-  data: number;
-}
-
-interface Sensor {
-  name: string;
-  data: SensorGraphicData[];
-}
 
 const GraphicsModal = ({ isOpen, onClose, selectedSensor, setData, dataEdit   }) => {
   const { id, name, machineId } = dataEdit;
@@ -41,6 +32,12 @@ const GraphicsModal = ({ isOpen, onClose, selectedSensor, setData, dataEdit   })
       labels: [], 
       values: []
     },
+  );
+
+  const [sensor, setSensor] = useState<any>(
+    {
+      data: []
+    }
   );
 
   const [stompClient, setStompClient] = useState<any>();
@@ -65,38 +62,20 @@ const GraphicsModal = ({ isOpen, onClose, selectedSensor, setData, dataEdit   })
     setIsConnected(true);
   }
 
-  const [sensors, setSensors] = useState<any[]>([
-    //TODO: create a option to select sensors in frontend
-    {
-      name: "sensor1",
-      data: []
-    },
-    {
-      name: "sensor2",
-      data: []
-    },
-    {
-      name: "sensor3",
-      data: []
-    },
-  ]);
-
   useEffect(() => {
-    const timestamps = sensors.flatMap((sensor) =>
-      sensor.data.map((dataPoint) => dataPoint.timestamp)
-    );
-
-    const values = sensors.flatMap((sensor) =>
-      sensor.data.map((dataPoint) => dataPoint.data)
-    );
+    const timestamps = sensor.data.map((dataPoint) => dataPoint.timestamp)
+  
+    const values = sensor.data.map((dataPoint) => dataPoint.data)
 
     setChartData({
       labels: timestamps,
       values: values,
     });
-  }, [sensors]);
 
-  const updateSensorData = (incomingData: SensorData, prevSensors: Sensor[]) => {
+    console.log("sensor: ", sensor);
+  }, [sensor]);
+
+  const updateSensorData = (incomingData: SensorData) => {
     const date = new Date(incomingData.timestamp);
     const formattedDate = date.toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -105,16 +84,11 @@ const GraphicsModal = ({ isOpen, onClose, selectedSensor, setData, dataEdit   })
     }); // Format as "dd/MM/yyyy"
     const formattedTime = date.toLocaleTimeString(); // Format as "HH:MM:SS AM/PM"
 
-    setSensors((prevSensors) =>
-      prevSensors.map((sensor) =>
-        sensor.name === incomingData.name
-          ? {
-              ...sensor,
-              data: [...sensor.data, { timestamp: formattedDate + formattedTime, data: incomingData.data }],
-            }
-          : sensor
-      )
-    );
+    console.log("\n\nsensor.data: ", sensor.data);
+
+    setSensor((prevSensor) => ({
+      data: [...prevSensor.data, { timestamp: formattedDate + formattedTime, data: incomingData.data }],
+    }));
   };
 
   const onMessageReceived = (msg: any) => {
@@ -123,11 +97,8 @@ const GraphicsModal = ({ isOpen, onClose, selectedSensor, setData, dataEdit   })
     console.log("received message: ", receivedMessage);
 
     if (JSON.parse(msg.body).id === id) {
-      console.log("received message is not from selected sensor");
-      return;
+      updateSensorData(receivedMessage);
     }
-
-    updateSensorData(receivedMessage);
   }
 
   useEffect(() => {
