@@ -46,6 +46,9 @@ const GraphicsModal = ({ isOpen, onClose, selectedSensor, setData, dataEdit   })
   const [stompClient, setStompClient] = useState<any>();
   const [isConnected, setIsConnected] = useState<Boolean>(false);
 
+  const backend_host = process.env.NEXT_PUBLIC_BACKEND_HOST;
+  const backend_port = process.env.NEXT_PUBLIC_BACKEND_PORT;
+
   const connect = () => {
     const sock = new SockJs(`http://${backend_host}:${backend_port}/ws`);
     const temp = over(sock);
