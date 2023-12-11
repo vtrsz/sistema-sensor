@@ -23,7 +23,6 @@ interface SensorData {
   timestamp: EpochTimeStamp;
 }
 
-
 const GraphicsModal = ({ isOpen, onClose, selectedSensor, setData, dataEdit   }) => {
   const { id, name, machineId } = dataEdit;
 
@@ -41,38 +40,46 @@ const GraphicsModal = ({ isOpen, onClose, selectedSensor, setData, dataEdit   })
   );
 
   const [stompClient, setStompClient] = useState<any>();
-  const [isConnected, setIsConnected] = useState<Boolean>(false);
 
   const backend_host = process.env.NEXT_PUBLIC_BACKEND_HOST;
   const backend_port = process.env.NEXT_PUBLIC_BACKEND_PORT;
 
-  const connect = () => {
+  const connectToWebSocket = async () => {
     const sock = new SockJs(`http://${backend_host}:${backend_port}/ws`);
     const temp = over(sock);
-    setStompClient(temp);
-
-    temp.connect({}, onConnect, onError);
+  
+    return new Promise((resolve, reject) => {
+      temp.connect({}, () => {
+        resolve(temp);
+      }, (error) => {
+        reject(error);
+      });
+    });
+  }
+  
+  const subscribeToWebSocket = (stompClient: any) => {
+    stompClient.subscribe("/topic/public", onMessageReceived);
   }
 
-  const onError = (error: any) => {
-    console.log(error);
-  }
-
-  const onConnect = () => {
-    setIsConnected(true);
-  }
+  const handleClose = () => {
+    if (stompClient) {
+      stompClient.unsubscribe("/topic/public", onMessageReceived);
+      stompClient.disconnect(() => {
+        console.log("Disconnected");
+      });
+    }
+    onClose();
+  };
+  
 
   useEffect(() => {
     const timestamps = sensor.data.map((dataPoint) => dataPoint.timestamp)
-  
     const values = sensor.data.map((dataPoint) => dataPoint.data)
 
     setChartData({
       labels: timestamps,
       values: values,
     });
-
-    console.log("sensor: ", sensor);
   }, [sensor]);
 
   const updateSensorData = (incomingData: SensorData) => {
@@ -83,8 +90,6 @@ const GraphicsModal = ({ isOpen, onClose, selectedSensor, setData, dataEdit   })
       year: 'numeric',
     }); // Format as "dd/MM/yyyy"
     const formattedTime = date.toLocaleTimeString(); // Format as "HH:MM:SS AM/PM"
-
-    console.log("\n\nsensor.data: ", sensor.data);
 
     setSensor((prevSensor) => ({
       data: [...prevSensor.data, { timestamp: formattedDate + formattedTime, data: incomingData.data }],
@@ -102,34 +107,18 @@ const GraphicsModal = ({ isOpen, onClose, selectedSensor, setData, dataEdit   })
   }
 
   useEffect(() => {
-    console.log("useEffect connected: ", isConnected);
-    if (isConnected && stompClient) {
-      const sleepDuration = 5000; // 5 seconds
-
-      console.log("connected and subscribed to /topic/public");
-      while (isConnected === false) {
-        setTimeout(() => {
-          console.log('Sleep complete!');
-        }, sleepDuration);
+    const initializeWebSocket = async () => {
+      try {
+        const tempStompClient = await connectToWebSocket();
+        setStompClient(tempStompClient);
+        subscribeToWebSocket(tempStompClient);
+      } catch (error) {
+        console.error("Error connecting to WebSocket:", error);
       }
-      isConnected === true && stompClient.subscribe("/topic/public", onMessageReceived);
-
-      
-      return () => {
-        stompClient.unsubscribe("/topic/public", onMessageReceived);
-      }
-    }
-  }, [isConnected]);
-
-  useEffect(() => {
-    connect();
+    };
+  
+    initializeWebSocket();
   }, []);
-
-  const handleClose = () => {
-    stompClient.disconnect();
-    setIsConnected(false);
-    onClose();
-  };
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
@@ -139,7 +128,7 @@ const GraphicsModal = ({ isOpen, onClose, selectedSensor, setData, dataEdit   })
         <ModalCloseButton />
         <ModalBody>
 
-          <ChartComponent data={chartData} />
+        <ChartComponent data={chartData} />
 
         </ModalBody>
         <ModalFooter>
